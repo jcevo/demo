@@ -1,0 +1,5376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hot Opportunity Radar · V5 · Interactive Prototype (antigravity v11)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #050508;
+      --bg-screen: #0a0a0f;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hi: rgba(255, 255, 255, 0.07);
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-medium: rgba(255, 255, 255, 0.1);
+      --text-primary: #e8e6e1;
+      --text-secondary: #8a887f;
+      --text-tertiary: #4a4844;
+      --gold: #c9a96e;
+      --gold-soft: rgba(201, 169, 110, 0.18);
+      --gold-line: rgba(201, 169, 110, 0.35);
+      --positive: #2dd882;
+      --positive-soft: rgba(45, 216, 130, 0.12);
+      --negative: #ff4757;
+      --negative-soft: rgba(255, 71, 87, 0.12);
+      --blue: #5b9cf6;
+      --blue-soft: rgba(91, 156, 246, 0.14);
+      --amber: #f0a93b;
+      --amber-soft: rgba(240, 169, 59, 0.16);
+      --phone-w: 402px;
+      --phone-h: 874px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: #0c0c10;
+      font-family: 'DM Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 48px 24px 80px;
+      background-image:
+        radial-gradient(ellipse 900px 600px at 25% 15%, rgba(201, 169, 110, 0.04), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 75% 85%, rgba(91, 156, 246, 0.025), transparent 60%);
+    }
+
+    .page-header {
+      text-align: center;
+      margin: 0 auto 56px;
+      max-width: 1000px;
+    }
+
+    .page-header h1 {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .page-header h1 .accent {
+      color: var(--gold);
+    }
+
+    .page-header .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+    }
+
+    .page-header .meta {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+    }
+
+    .page-header .meta span {
+      position: relative;
+    }
+
+    .page-header .meta span:not(:last-child)::after {
+      content: '·';
+      position: absolute;
+      right: -14px;
+      color: var(--gold);
+    }
+
+    .screens-container {
+      display: flex;
+      gap: 64px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .screen-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen-label {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .screen-label::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 1px;
+      background: var(--gold-line);
+    }
+
+    /* ============= iPhone 17 frame ============= */
+    .iphone-frame {
+      width: calc(var(--phone-w) + 22px);
+      height: calc(var(--phone-h) + 22px);
+      background: linear-gradient(145deg, #2a2a30 0%, #131318 50%, #2a2a30 100%);
+      border-radius: 56px;
+      padding: 11px;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        inset 0 0 1px rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .iphone-screen {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      background: var(--bg-screen);
+      border-radius: 46px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 124px;
+      height: 36px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 50;
+    }
+
+    /* ============= Status Bar / Nav ============= */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 30px 0;
+      height: 54px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .status-bar .icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .status-bar svg {
+      fill: currentColor;
+      stroke: currentColor;
+      width: 18px;
+      height: 12px;
+      stroke-width: 0;
+    }
+
+    .status-bar svg.battery rect:first-child {
+      fill: none;
+      stroke-width: 1.2;
+    }
+
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-bar .left,
+    .nav-bar .right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-bar .nav-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-bar svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: var(--text-primary);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-back svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ============= Scrollable body ============= */
+    .scroll-body {
+      height: calc(var(--phone-h) - 54px - 51px - 78px);
+      overflow-y: auto;
+      padding: 0 16px 20px;
+    }
+
+    .scroll-body.no-tab {
+      height: calc(var(--phone-h) - 54px - 51px);
+    }
+
+    .scroll-body.no-tab.with-action {
+      height: calc(var(--phone-h) - 54px - 51px - 64px);
+    }
+
+    .scroll-body.with-input {
+      height: calc(var(--phone-h) - 54px - 51px - 72px);
+    }
+
+    .scroll-body::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* ============= Tab Bar ============= */
+    .tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 78px;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 10px 8px 24px;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(20px);
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: var(--text-tertiary);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .tab-item.active {
+      color: var(--gold);
+    }
+
+    .tab-item.active svg {
+      stroke: var(--gold);
+    }
+
+    .tab-item.radar.active svg {
+      stroke: var(--gold);
+      fill: var(--gold-soft);
+    }
+
+    /* ============= S1 · Header brand ============= */
+    .brand-block {
+      padding: 18px 4px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-block .title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-block .title .accent {
+      color: var(--gold);
+    }
+
+    .brand-block .sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-pulse {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-soft) 0%, transparent 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .brand-pulse::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+    }
+
+    .market-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 4px 4px 14px;
+    }
+
+    .market-tab {
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      letter-spacing: 0.3px;
+    }
+
+    .market-tab.active {
+      background: var(--gold);
+      color: #0a0a0f;
+      border-color: var(--gold);
+    }
+
+    /* ============= S1 · Hit banner ============= */
+    .hit-banner {
+      margin: 0 4px 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(201, 169, 110, 0.12), rgba(91, 156, 246, 0.06));
+      border: 1px solid var(--gold-line);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hit-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .hit-banner .ico {
+      font-size: 22px;
+      filter: drop-shadow(0 0 6px var(--gold-soft));
+    }
+
+    .hit-banner .text {
+      flex: 1;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--text-primary);
+    }
+
+    .hit-banner .text strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .hit-banner .arrow {
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    /* ============= S1 · Opportunity Card ============= */
+    .opp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 4px;
+    }
+
+    .opp-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .opp-card[data-go] {
+      cursor: pointer;
+    }
+
+    .opp-card .card-jump-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--gold);
+      margin-top: 10px;
+      opacity: 0.72;
+    }
+
+    .opp-card .card-jump-hint svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .opp-card.rank-1 {
+      background: linear-gradient(135deg, rgba(201, 169, 110, 0.08), var(--bg-card));
+      border-color: var(--gold-line);
+    }
+
+    .opp-card.rank-1::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--gold), transparent);
+    }
+
+    .opp-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .opp-head-left {
+      flex: 1;
+    }
+
+    .opp-rank {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+
+    .opp-rank .num {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .opp-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      line-height: 1.35;
+      color: var(--text-primary);
+    }
+
+    .level-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .level-badge.hi {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid var(--gold-line);
+    }
+
+    .level-badge.mid-hi {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .level-badge.mid {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+    }
+
+    .opp-pitch {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .opp-pitch .hl {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .opp-score-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+    }
+
+    .score-ring {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .score-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .score-ring .num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+
+    .score-ring .num small {
+      font-size: 9px;
+      color: var(--text-tertiary);
+      margin-left: 1px;
+      font-weight: 400;
+    }
+
+    .subscore-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 10px;
+    }
+
+    .subscore {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      letter-spacing: 0.2px;
+    }
+
+    .subscore .bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .subscore .bar i {
+      display: block;
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .subscore.hi .bar i {
+      background: var(--gold);
+    }
+
+    .subscore.mid .bar i {
+      background: var(--blue);
+    }
+
+    .subscore.warn .bar i {
+      background: var(--negative);
+      opacity: 0.8;
+    }
+
+    .opp-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .opp-tag {
+      font-size: 10.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      letter-spacing: 0.2px;
+    }
+
+    .opp-tag.period {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+    }
+
+    .stock-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .stock-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 9px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      letter-spacing: 0.4px;
+    }
+
+    .stock-chip .pct {
+      font-weight: 500;
+      font-size: 10.5px;
+      letter-spacing: 0;
+    }
+
+    .stock-chip.up .pct {
+      color: var(--positive);
+    }
+
+    .stock-chip.down .pct {
+      color: var(--negative);
+    }
+
+    .stock-chip .star {
+      color: var(--gold);
+      font-size: 10px;
+    }
+
+    .stock-chip .pos {
+      color: var(--blue);
+      font-size: 10px;
+    }
+
+    /* ============= S2 · Detail page ============= */
+    .detail-hero {
+      padding: 18px 4px 14px;
+    }
+
+    .detail-hero .badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .detail-hero .opp-title {
+      font-size: 22px;
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .detail-hero .pitch {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .detail-hero .pitch .hl {
+      color: var(--text-primary);
+    }
+
+    .section {
+      margin: 18px 0;
+      padding: 0 4px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .section-title .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    /* Score detail card */
+    .score-detail-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .score-detail-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed var(--border-medium);
+      margin-bottom: 14px;
+    }
+
+    .score-detail-top .ring-big {
+      width: 76px;
+      height: 76px;
+    }
+
+    .score-detail-top .ring-big .num {
+      font-size: 22px;
+    }
+
+    .score-detail-top .ring-big .num small {
+      font-size: 11px;
+    }
+
+    .score-summary {
+      flex: 1;
+    }
+
+    .score-summary .lbl {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+
+    .score-summary .verdict {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .score-summary .desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .subscore-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .subscore-item {
+      display: grid;
+      grid-template-columns: 80px 1fr 28px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .subscore-item .lbl {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+    }
+
+    .subscore-item .bar {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .subscore-item .bar i {
+      display: block;
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .subscore-item .val {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: right;
+    }
+
+    .subscore-item.gold .bar i {
+      background: var(--gold);
+    }
+
+    .subscore-item.blue .bar i {
+      background: var(--blue);
+    }
+
+    .subscore-item.green .bar i {
+      background: var(--positive);
+    }
+
+    .subscore-item.warn .bar i {
+      background: var(--negative);
+      opacity: 0.85;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 22px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: var(--border-medium);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 14px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 5px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.18);
+    }
+
+    .timeline-item.recent::before {
+      background: var(--positive);
+      box-shadow: 0 0 0 3px rgba(45, 216, 130, 0.18);
+    }
+
+    .timeline-item .date {
+      font-family: 'Sora', sans-serif;
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+
+    .timeline-item .text {
+      font-size: 12.5px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* Logic chain */
+    .logic-chain {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px 12px;
+    }
+
+    .chain-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chain-node {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .chain-node .arrow {
+      color: var(--gold);
+      font-size: 14px;
+      margin-left: 4px;
+    }
+
+    .chain-node .step {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+      border: 1px solid var(--gold-line);
+      color: var(--gold);
+      font-family: 'Sora', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chain-conn {
+      margin-left: 11px;
+      width: 1px;
+      height: 8px;
+      background: var(--gold-line);
+    }
+
+    /* Stocks list (detail) */
+    .stock-list-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .stock-row-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+    }
+
+    .stock-row-item:last-child {
+      border-bottom: 0;
+    }
+
+    .stock-row-item .left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 70px;
+    }
+
+    .stock-row-item .code {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .stock-row-item .name {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+    }
+
+    .stock-row-item .mid .why {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin-top: 3px;
+    }
+
+    .stock-row-item .mid .strength {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .strength.s-strong {
+      background: var(--positive-soft);
+      color: var(--positive);
+    }
+
+    .strength.s-mid {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .strength.s-weak {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+    }
+
+    .stock-row-item .right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stock-row-item .price {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .stock-row-item .pct {
+      font-size: 11px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .up .price,
+    .up .pct {
+      color: var(--positive);
+    }
+
+    .down .price,
+    .down .pct {
+      color: var(--negative);
+    }
+
+    .tag-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+    }
+
+    .tag-mark.fav {
+      background: var(--gold-soft);
+      color: var(--gold);
+    }
+
+    .tag-mark.hold {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    /* Chips: pos / neg */
+    .chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip-pos {
+      font-size: 11.5px;
+      padding: 6px 12px;
+      border-radius: 14px;
+      background: var(--positive-soft);
+      color: var(--positive);
+      border: 1px solid rgba(45, 216, 130, 0.25);
+    }
+
+    .chip-neg {
+      font-size: 11.5px;
+      padding: 6px 12px;
+      border-radius: 14px;
+      background: var(--negative-soft);
+      color: var(--negative);
+      border: 1px solid rgba(255, 71, 87, 0.25);
+    }
+
+    /* Watch indicators */
+    .watch-list {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 6px 14px;
+    }
+
+    .watch-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .watch-item:last-child {
+      border-bottom: 0;
+    }
+
+    .watch-item .check {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1.2px solid var(--gold-line);
+      background: var(--gold-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .watch-item .check svg {
+      width: 10px;
+      height: 10px;
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .watch-item .meta {
+      margin-left: auto;
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+    }
+
+    /* Personalized impact */
+    .persona-card {
+      background: linear-gradient(135deg, rgba(91, 156, 246, 0.10), rgba(201, 169, 110, 0.05));
+      border: 1px solid rgba(91, 156, 246, 0.25);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .persona-card .head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .persona-card .head .ico {
+      font-size: 16px;
+    }
+
+    .persona-card .head .lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .persona-card .body {
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: var(--text-primary);
+    }
+
+    .persona-card .body strong {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .persona-card .body .pos {
+      color: var(--positive);
+      font-weight: 600;
+    }
+
+    /* AI Ask chips */
+    .ai-ask-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .ai-ask-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .ai-ask-head .ico {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--gold-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .ai-ask-head .lbl {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .ai-ask-head .more {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--gold);
+    }
+
+    .ask-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ask-chip {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ask-chip .arrow {
+      color: var(--gold);
+      font-size: 14px;
+    }
+
+    /* CTA bar */
+    .cta-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 0 4px;
+    }
+
+    .cta {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+    }
+
+    .cta.primary {
+      flex: 1.3;
+      background: linear-gradient(135deg, var(--gold), #b8965e);
+      color: #0a0a0f;
+      border-color: var(--gold);
+    }
+
+    /* Compliance footer */
+    .compliance {
+      margin-top: 14px;
+      padding: 0 8px 4px;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ============= S3 · Stock page ============= */
+    .stock-hero {
+      padding: 14px 4px 18px;
+    }
+
+    .stock-hero .code-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .stock-hero .code {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .stock-hero .name {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stock-hero .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .stock-hero .price {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--positive);
+      letter-spacing: -0.5px;
+    }
+
+    .stock-hero .delta {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--positive);
+    }
+
+    .stock-hero .meta-line {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .mini-chart {
+      height: 80px;
+      margin: 14px 4px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-summary-card {
+      background: linear-gradient(135deg, rgba(201, 169, 110, 0.10), transparent);
+      border: 1px solid var(--gold-line);
+      border-radius: 16px;
+      padding: 14px;
+      margin: 0 4px;
+      position: relative;
+    }
+
+    .ai-summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 14px;
+      right: 14px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .ai-summary-card .head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .ai-summary-card .head .ico {
+      font-size: 14px;
+      color: var(--gold);
+    }
+
+    .ai-summary-card .head .lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .ai-summary-card .head .verdict {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 5px;
+      background: var(--positive-soft);
+      color: var(--positive);
+    }
+
+    .ai-summary-card .body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+
+    .ai-summary-card .body .hl {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .related-hot {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .related-hot-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .related-hot-item:last-child {
+      border-bottom: 0;
+    }
+
+    .related-hot-item .ico {
+      font-size: 16px;
+    }
+
+    .related-hot-item .text {
+      flex: 1;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .related-hot-item .tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .tag.t-strong {
+      background: var(--positive-soft);
+      color: var(--positive);
+    }
+
+    .tag.t-mid {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .tag.t-neg {
+      background: var(--negative-soft);
+      color: var(--negative);
+    }
+
+    .related-hot-item .arrow {
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    .attribution-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .attr-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .attr-item .ico {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .attr-item .lbl {
+      color: var(--gold);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    /* Continuity bar */
+    .continuity-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .continuity-stages {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+    }
+
+    .continuity-stages .active {
+      color: var(--positive);
+      font-weight: 600;
+    }
+
+    .continuity-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .continuity-bar i {
+      display: block;
+      height: 100%;
+      width: 35%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--positive), var(--amber));
+    }
+
+    .continuity-bar .marker {
+      position: absolute;
+      left: 35%;
+      top: -3px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.3);
+      transform: translateX(-50%);
+    }
+
+    .continuity-card .desc {
+      margin-top: 12px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Similar stocks horizontal scroll */
+    .similar-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 4px 0 4px;
+      margin: 0 -4px;
+    }
+
+    .similar-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sim-card {
+      flex: 0 0 110px;
+      padding: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .sim-card:first-child {
+      margin-left: 4px;
+    }
+
+    .sim-card:last-child {
+      margin-right: 4px;
+    }
+
+    .sim-card .code {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .sim-card .name {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+      margin-bottom: 8px;
+    }
+
+    .sim-card .price {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .sim-card .pct {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .sim-card.up .price,
+    .sim-card.up .pct {
+      color: var(--positive);
+    }
+
+    .sim-card.down .price,
+    .sim-card.down .pct {
+      color: var(--negative);
+    }
+
+    /* Holding impact */
+    .holding-card {
+      background: linear-gradient(135deg, rgba(45, 216, 130, 0.10), rgba(91, 156, 246, 0.04));
+      border: 1px solid rgba(45, 216, 130, 0.25);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .holding-card .top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .holding-card .top .lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--positive);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .holding-card .body {
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--text-primary);
+    }
+
+    .holding-card .body .pos {
+      color: var(--positive);
+      font-weight: 600;
+    }
+
+    /* Stock action bar */
+    .stock-action-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 78px;
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px 24px;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(10, 10, 15, 0.94);
+      backdrop-filter: blur(20px);
+    }
+
+    .stock-action-bar .btn {
+      flex: 1;
+      border-radius: 12px;
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.5px;
+      height: 42px;
+    }
+
+    .btn.fav {
+      flex: 0.8;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+    }
+
+    .btn.buy {
+      background: linear-gradient(135deg, var(--gold), #b8965e);
+      color: #0a0a0f;
+    }
+
+    .btn.sell {
+      background: var(--negative);
+      color: #fff;
+    }
+
+    /* ============= Comments module ============= */
+    .comment-section {
+      margin-top: 18px;
+    }
+
+    .comment-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 12px;
+    }
+
+    .comment-section-head .lbl {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .comment-section-head .lbl .count {
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    .comment-section-head .sort-ico {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-secondary);
+      stroke-width: 1.6;
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .comment-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 2px 14px;
+    }
+
+    .comment-avatar {
+      flex: 0 0 32px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #8c6f3d);
+      color: #0a0a0f;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0;
+    }
+
+    .comment-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .comment-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .comment-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .comment-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    .comment-text {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .comment-reaction {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .comment-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--text-secondary);
+    }
+
+    .comment-actions .ca-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    .comment-actions .ca-item.right {
+      margin-left: auto;
+    }
+
+    .comment-actions svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 1.6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .comment-more-link {
+      text-align: center;
+      font-size: 12px;
+      color: var(--gold);
+      padding: 10px 0 4px;
+      cursor: pointer;
+    }
+
+    /* ============= Detail bottom fixed action bar ============= */
+    .detail-action-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 8px 16px 12px;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(10, 10, 15, 0.94);
+      backdrop-filter: blur(20px);
+      z-index: 20;
+    }
+
+    .detail-action-bar .input-pill {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+      color: var(--text-secondary);
+    }
+
+    .detail-action-bar .input-pill svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-secondary);
+      stroke-width: 1.6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 14px;
+    }
+
+    .detail-action-bar .action-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 36px;
+      color: var(--text-primary);
+    }
+
+    .detail-action-bar .action-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--text-primary);
+      stroke-width: 1.6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .detail-action-bar .action-btn .num {
+      position: absolute;
+      top: -2px;
+      right: -8px;
+      min-width: 16px;
+      height: 14px;
+      padding: 0 4px;
+      border-radius: 7px;
+      background: var(--gold);
+      color: #0a0a0f;
+      font-size: 9.5px;
+      font-weight: 700;
+      line-height: 14px;
+      text-align: center;
+      letter-spacing: 0;
+    }
+
+    /* ============= S4 · AI Chat ============= */
+    .chat-context {
+      margin: 12px 4px;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-line);
+      border-radius: 12px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-context .ico {
+      color: var(--gold);
+    }
+
+    .chat-context .hl {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .suggest-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 6px 4px;
+      margin: 0;
+    }
+
+    .suggest-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .suggest-chip {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      background: var(--gold-soft);
+      border: 1px solid var(--gold-line);
+      border-radius: 18px;
+      font-size: 11.5px;
+      color: var(--gold);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .chat-area {
+      padding: 14px 4px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bubble {
+      max-width: 85%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--gold);
+      color: #0a0a0f;
+      border-bottom-right-radius: 4px;
+      font-weight: 500;
+    }
+
+    .bubble.ai {
+      align-self: flex-start;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble.ai .verdict-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--border-medium);
+    }
+
+    .bubble.ai .verdict-row .lbl {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .bubble.ai .verdict-row .val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--negative);
+    }
+
+    .bubble.ai .reason-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .bubble.ai .reason-list li {
+      font-size: 12.5px;
+      color: var(--text-primary);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.55;
+    }
+
+    .bubble.ai .reason-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .bubble.ai .alt-tip {
+      margin-top: 4px;
+      padding: 10px 12px;
+      background: rgba(91, 156, 246, 0.08);
+      border-left: 2px solid var(--blue);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    .bubble.ai .alt-tip .lbl {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .bubble.ai .compliance-line {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-subtle);
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+    }
+
+    .bubble-meta {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: -6px;
+      margin-bottom: -6px;
+      padding: 0 4px;
+    }
+
+    .bubble-meta.user {
+      align-self: flex-end;
+    }
+
+    .bubble-meta.ai {
+      align-self: flex-start;
+    }
+
+    .input-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      padding: 12px 12px 18px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(10, 10, 15, 0.94);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .input-bar .input-box {
+      flex: 1;
+      height: 40px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 20px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .input-bar .send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-bar .send-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: #0a0a0f;
+      stroke: #0a0a0f;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+      line-height: 1.7;
+    }
+
+    .page-footer .row {
+      margin: 4px 0;
+    }
+
+    .page-footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* ============================================================
+   v3-claude · Options upgrade — new components
+============================================================ */
+
+    /* ---------- Budget filter (S1 top) ---------- */
+    .budget-filter {
+      margin: 0 4px 14px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(201, 169, 110, 0.12), rgba(91, 156, 246, 0.05));
+      border: 1px solid var(--gold-line);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .budget-filter .ico {
+      font-size: 15px;
+    }
+
+    .budget-filter .lbl {
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+    }
+
+    .budget-filter .amount {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      color: var(--gold);
+      font-size: 13px;
+      margin: 0 2px;
+    }
+
+    .budget-filter .caret {
+      color: var(--gold);
+      font-size: 11px;
+      margin-right: auto;
+    }
+
+    .budget-filter .config-btn {
+      font-size: 10.5px;
+      padding: 4px 9px;
+      border-radius: 8px;
+      background: rgba(201, 169, 110, 0.12);
+      color: var(--gold);
+      border: 1px solid var(--gold-line);
+      letter-spacing: 0.3px;
+    }
+
+    /* ---------- Option suggest row (inside S1 card) ---------- */
+    .opt-suggest-row {
+      margin-top: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(91, 156, 246, 0.10), rgba(201, 169, 110, 0.06));
+      border: 1px solid rgba(91, 156, 246, 0.22);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-primary);
+    }
+
+    .opt-suggest-row .ico {
+      font-size: 13px;
+    }
+
+    .opt-suggest-row .label {
+      color: var(--blue);
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      font-size: 10.5px;
+    }
+
+    .opt-suggest-row .budget-tag {
+      font-family: 'Sora', sans-serif;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-right: 4px;
+    }
+
+    .opt-suggest-row .pitch {
+      flex: 1;
+      font-size: 11.5px;
+      letter-spacing: 0.1px;
+    }
+
+    .opt-suggest-row .pitch .dir-up {
+      color: var(--positive);
+      font-weight: 600;
+    }
+
+    .opt-suggest-row .pitch .dir-dn {
+      color: var(--negative);
+      font-weight: 600;
+    }
+
+    .opt-suggest-row .pitch .premium {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .opt-suggest-row .arrow {
+      color: var(--blue);
+      font-size: 14px;
+    }
+
+    /* ---------- Stock chip OPT badge ---------- */
+    .stock-chip .opt-mark {
+      display: inline-flex;
+      align-items: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 1px 4px;
+      margin-left: 2px;
+      border-radius: 3px;
+      background: var(--gold);
+      color: #0a0a0f;
+    }
+
+    /* ---------- Hit banner extra line ---------- */
+    .hit-banner .text .opt-flag {
+      display: inline-block;
+      margin-top: 2px;
+      font-size: 10.5px;
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    /* ---------- Permission banner (S2) ---------- */
+    .opt-permission-banner {
+      margin: 0 4px 14px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: rgba(240, 169, 59, 0.10);
+      border: 1px solid rgba(240, 169, 59, 0.32);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      color: var(--text-primary);
+    }
+
+    .opt-permission-banner .ico {
+      color: var(--amber);
+      font-size: 14px;
+    }
+
+    .opt-permission-banner .text {
+      flex: 1;
+      line-height: 1.45;
+    }
+
+    .opt-permission-banner .text .hl {
+      color: var(--amber);
+      font-weight: 600;
+    }
+
+    .opt-permission-banner .open-btn {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 7px;
+      background: var(--amber);
+      color: #0a0a0f;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    /* ---------- Plan card (S2 dual track) ---------- */
+    .plan-card-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .plan-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto 18px;
+      gap: 10px;
+      padding: 12px 14px;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .plan-head .left {
+      min-width: 70px;
+    }
+
+    .plan-head .code {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .plan-head .name {
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    .plan-head .mid {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .plan-head .strength {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-bottom: 3px;
+    }
+
+    .plan-head .right {
+      text-align: right;
+    }
+
+    .plan-head .price {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .plan-head .pct {
+      font-size: 11px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .plan-head.up .price,
+    .plan-head.up .pct {
+      color: var(--positive);
+    }
+
+    .plan-head.down .price,
+    .plan-head.down .pct {
+      color: var(--negative);
+    }
+
+    .plan-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.18);
+      padding: 4px;
+      margin: 10px 12px 0;
+      border-radius: 10px;
+      gap: 4px;
+    }
+
+    .plan-tab {
+      flex: 1;
+      text-align: center;
+      padding: 7px 8px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .plan-tab .icon {
+      margin-right: 3px;
+      font-size: 11px;
+    }
+
+    .plan-tab.active {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px var(--border-medium);
+    }
+
+    .plan-tab.active.opt {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px var(--gold-line);
+    }
+
+    .plan-body {
+      padding: 12px;
+    }
+
+    /* ---------- Stock plan body ---------- */
+    .stock-plan-body {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 4px 4px;
+    }
+
+    .stock-plan-body .min-buy {
+      flex: 1;
+    }
+
+    .stock-plan-body .min-buy .lbl {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .stock-plan-body .min-buy .val {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .stock-plan-body .min-buy .hint {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .stock-plan-body .buy-btn {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--gold), #b8965e);
+      color: #0a0a0f;
+    }
+
+    /* ---------- Scenario switcher (3 modes) ---------- */
+    .scene-switcher {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .scene-pill {
+      flex: 1;
+      text-align: center;
+      padding: 7px 6px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .scene-pill .icon {
+      margin-right: 3px;
+    }
+
+    .scene-pill.active.bull {
+      background: var(--positive-soft);
+      border-color: rgba(45, 216, 130, 0.4);
+      color: var(--positive);
+      font-weight: 600;
+    }
+
+    .scene-pill.active.flat {
+      background: var(--blue-soft);
+      border-color: rgba(91, 156, 246, 0.4);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .scene-pill.active.bear {
+      background: var(--negative-soft);
+      border-color: rgba(255, 71, 87, 0.4);
+      color: var(--negative);
+      font-weight: 600;
+    }
+
+    /* ---------- Option recommendation card ---------- */
+    .opt-card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-medium);
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .opt-card.bull {
+      border-color: rgba(45, 216, 130, 0.32);
+    }
+
+    .opt-card.flat {
+      border-color: rgba(91, 156, 246, 0.32);
+    }
+
+    .opt-card.bear {
+      border-color: rgba(255, 71, 87, 0.32);
+    }
+
+    .opt-card-header {
+      padding: 9px 12px;
+      font-size: 10.5px;
+      letter-spacing: 0.4px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .opt-card.bull .opt-card-header {
+      background: var(--positive-soft);
+      color: var(--positive);
+    }
+
+    .opt-card.flat .opt-card-header {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .opt-card.bear .opt-card-header {
+      background: var(--negative-soft);
+      color: var(--negative);
+    }
+
+    .opt-card-header .budget-note {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      letter-spacing: 0.2px;
+    }
+
+    .opt-contract {
+      padding: 11px 12px 9px;
+      border-bottom: 1px dashed var(--border-medium);
+    }
+
+    .opt-contract .contract-line {
+      font-family: 'Sora', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--text-primary);
+    }
+
+    .opt-contract .premium-line {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .opt-contract .premium-line .premium {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .opt-contract .premium-line .total {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .opt-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--border-subtle);
+    }
+
+    .opt-metric {
+      background: rgba(0, 0, 0, 0.18);
+      padding: 9px 6px;
+      text-align: center;
+    }
+
+    .opt-metric .ico {
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .opt-metric .lbl {
+      font-size: 9.5px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .opt-metric .val {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    .opt-metric .sub {
+      font-size: 9.5px;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    .opt-metric.leverage .val {
+      color: var(--gold);
+    }
+
+    .opt-metric.maxloss {
+      background: rgba(255, 71, 87, 0.10);
+    }
+
+    .opt-metric.maxloss .val {
+      color: var(--negative);
+    }
+
+    .opt-metric.theta .val {
+      color: var(--amber);
+    }
+
+    .opt-ai-tip {
+      padding: 9px 12px;
+      font-size: 11.5px;
+      color: var(--text-primary);
+      line-height: 1.5;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(201, 169, 110, 0.04);
+    }
+
+    .opt-ai-tip .lbl {
+      color: var(--gold);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .opt-ai-tip .hl {
+      color: var(--positive);
+      font-weight: 600;
+    }
+
+    .opt-ai-tip .hl-down {
+      color: var(--negative);
+      font-weight: 600;
+    }
+
+    .opt-cta {
+      display: flex;
+      gap: 6px;
+      padding: 9px 10px;
+    }
+
+    .opt-cta .btn {
+      flex: 1;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 8px 6px;
+      border-radius: 8px;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    .opt-cta .btn.ghost {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold-line);
+    }
+
+    .opt-cta .btn.primary {
+      flex: 1.2;
+      background: var(--gold);
+      color: #0a0a0f;
+    }
+
+    .opt-risk-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      padding: 0 10px 10px;
+    }
+
+    .opt-risk-tag {
+      font-size: 9.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 71, 87, 0.08);
+      color: var(--negative);
+      border: 1px solid rgba(255, 71, 87, 0.18);
+      letter-spacing: 0.3px;
+      font-weight: 500;
+    }
+
+    .opt-risk-tag.warn {
+      background: rgba(240, 169, 59, 0.10);
+      color: var(--amber);
+      border-color: rgba(240, 169, 59, 0.25);
+    }
+
+    /* ---------- S3 options snapshot card ---------- */
+    .opt-snapshot-card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-line);
+      border-radius: 16px;
+      margin: 14px 4px 0;
+      overflow: hidden;
+    }
+
+    .opt-snapshot-card .snap-head {
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: linear-gradient(90deg, var(--gold-soft), transparent);
+    }
+
+    .opt-snapshot-card .snap-head .ico {
+      font-size: 14px;
+    }
+
+    .opt-snapshot-card .snap-head .lbl {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+    }
+
+    .opt-snapshot-card .snap-head .budget {
+      margin-left: auto;
+      font-size: 10.5px;
+      color: var(--text-secondary);
+    }
+
+    .opt-snapshot-card .snap-head .budget b {
+      font-family: 'Sora', sans-serif;
+      color: var(--gold);
+    }
+
+    .opt-snapshot-card .snap-body {
+      padding: 12px;
+    }
+
+    .opt-snapshot-card .full-chain-link {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      font-size: 11.5px;
+      color: var(--gold);
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(201, 169, 110, 0.04);
+      letter-spacing: 0.4px;
+    }
+
+    /* ---------- S3 action bar quick-options button ---------- */
+    .btn.opt-flash {
+      background: linear-gradient(135deg, var(--gold), #b8965e);
+      color: #0a0a0f;
+    }
+
+    .btn.opt-flash .flash {
+      font-size: 12px;
+      margin-right: 3px;
+    }
+
+    /* ---------- View more chain link generic ---------- */
+    .full-chain-inline {
+      display: block;
+      text-align: center;
+      margin-top: 8px;
+      padding: 7px;
+      font-size: 11px;
+      color: var(--gold);
+      background: rgba(201, 169, 110, 0.06);
+      border: 1px dashed var(--gold-line);
+      border-radius: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ---------- S2 detail tab nav (sticky) ---------- */
+    .detail-tab-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      gap: 5px;
+      margin: 0 -16px 14px;
+      padding: 9px 16px;
+      overflow-x: auto;
+      background: rgba(10, 10, 15, 0.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      scrollbar-width: none;
+    }
+
+    .detail-tab-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .detail-tab {
+      flex: 0 0 auto;
+      padding: 5px 11px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      color: var(--text-secondary);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    .detail-tab.active {
+      background: var(--gold);
+      color: #0a0a0f;
+      border-color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ---------- Plan card collapse/expand ---------- */
+    .plan-head {
+      position: relative;
+    }
+
+    .plan-head .head-chev {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-left: 4px;
+      transition: transform .2s;
+      display: inline-block;
+    }
+
+    .plan-card-wrap.expanded .plan-head .head-chev {
+      transform: rotate(180deg);
+      color: var(--gold);
+    }
+
+    .plan-card-wrap:not(.expanded) .plan-tabs,
+    .plan-card-wrap:not(.expanded) .plan-body {
+      display: none;
+    }
+
+    .plan-card-wrap:not(.expanded) .plan-head {
+      border-bottom: 0;
+    }
+
+    .plan-collapsed-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-top: 1px dashed var(--border-subtle);
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .plan-card-wrap.expanded .plan-collapsed-strip {
+      display: none;
+    }
+
+    .plan-collapsed-strip .opt-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .plan-collapsed-strip .opt-mini.gold-tone {
+      color: var(--gold);
+    }
+
+    .plan-collapsed-strip .sep {
+      color: var(--text-tertiary);
+    }
+
+    .plan-collapsed-strip .expand-hint {
+      margin-left: auto;
+      color: var(--gold);
+      font-size: 10.5px;
+      letter-spacing: 0.3px;
+      font-weight: 500;
+    }
+
+    /* ============================================================
+   v2 added: combo-card horizontal carousel · stock + options unified
+============================================================ */
+    .swipe-section {
+      margin: 0 -16px;
+    }
+
+    .swipe-rail {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 4px 16px 4px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .swipe-rail::-webkit-scrollbar {
+      display: none;
+    }
+
+    .combo-card {
+      flex: 0 0 322px;
+      scroll-snap-align: start;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .combo-card.rank-1 {
+      border-color: var(--gold-line);
+      background: linear-gradient(135deg, rgba(201, 169, 110, 0.06), var(--bg-card));
+    }
+
+    .combo-card.rank-1::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--gold), transparent);
+    }
+
+    .combo-head {
+      padding: 13px 14px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .combo-head .rank-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Sora', sans-serif;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--text-tertiary);
+      margin-bottom: 5px;
+    }
+
+    .combo-head .rank-line .num {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .combo-head .code-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .combo-head .code {
+      font-family: 'Sora', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .combo-head .name {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+      margin-left: 4px;
+    }
+
+    .combo-head .strength {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-left: auto;
+    }
+
+    .combo-head .why {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-top: 6px;
+    }
+
+    .combo-head .price-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .combo-head .price {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .combo-head .pct {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .combo-head .price,
+    .combo-head .pct {
+      color: var(--text-primary);
+    }
+
+
+    .combo-stock-block {
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(201, 169, 110, 0.06);
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .combo-stock-block:active {
+      background: rgba(201, 169, 110, 0.12);
+    }
+
+    .combo-stock-block .ico {
+      font-size: 14px;
+    }
+
+    .combo-stock-block .info {
+      flex: 1;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    .combo-stock-block .info .lbl {
+      font-family: 'Sora', sans-serif;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .combo-stock-block .info .v {
+      font-family: 'Sora', sans-serif;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+
+    .combo-stock-block .stock-cta {
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 7px 13px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--gold), #b8965e);
+      color: #0a0a0f;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+
+    .combo-opt-block {
+      padding: 12px 12px 14px;
+    }
+
+    .combo-opt-block .opt-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .combo-opt-block .opt-header .ico {
+      font-size: 13px;
+    }
+
+    .combo-opt-block .opt-header .hint {
+      margin-left: auto;
+      color: var(--text-tertiary);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      text-transform: none;
+    }
+
+    /* scenario panels: only active visible */
+    .combo-opt-block .scene-panel {
+      display: none;
+    }
+
+    .combo-opt-block .scene-panel.active {
+      display: block;
+    }
+
+    /* compact opt-card variant inside combo */
+    .combo-opt-block .opt-card {
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .combo-opt-block .opt-metrics {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .combo-opt-block .opt-metric {
+      padding: 8px 4px;
+    }
+
+    .combo-opt-block .opt-metric .val {
+      font-size: 11.5px;
+    }
+
+    .combo-opt-block .opt-cta .btn {
+      font-size: 11px;
+      padding: 7px 4px;
+    }
+
+    /* "Flat" neutral panel for cards lacking rich data */
+    .scene-flat-empty {
+      padding: 16px 12px;
+      text-align: center;
+      background: var(--blue-soft);
+      border: 1px dashed rgba(91, 156, 246, 0.32);
+      border-radius: 12px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .scene-flat-empty .ico {
+      font-size: 16px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .scene-flat-empty .hl {
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .scene-flat-empty .chain-link {
+      display: block;
+      margin-top: 8px;
+      color: var(--gold);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* page indicator */
+    .swipe-indicator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin: 10px 0 0;
+    }
+
+    .swipe-indicator .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-medium);
+      transition: all .2s;
+    }
+
+    .swipe-indicator .dot.active {
+      background: var(--gold);
+      width: 18px;
+      border-radius: 3px;
+    }
+
+    .swipe-counter {
+      font-family: 'Sora', sans-serif;
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .swipe-counter b {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* swipe hint */
+    .swipe-hint {
+      margin: 0 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.3px;
+    }
+
+    .swipe-hint .arrow {
+      color: var(--gold);
+      letter-spacing: -1px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    /* clickable feedback for static prototype */
+    .clickable {
+      cursor: pointer;
+      transition: transform .1s, opacity .15s;
+    }
+
+    .clickable:active {
+      transform: scale(0.98);
+      opacity: 0.85;
+    }
+
+
+    /* ---------- v3: Scene curve icons (replaces text pills) ---------- */
+    .scene-icons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      justify-content: center;
+    }
+
+    .scene-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .scene-icon:hover {
+      border-color: var(--border-medium);
+    }
+
+    .scene-icon.active {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+    }
+
+    .scene-icon svg {
+      width: 28px;
+      height: 20px;
+      fill: none;
+      stroke: var(--text-secondary);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .scene-icon.active svg {
+      stroke: var(--gold);
+    }
+
+    /* ---------- v3: P&L Chart ---------- */
+    .pnl-chart {
+      margin: 8px 0;
+      padding: 12px 8px 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .pnl-chart svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .chart-label-price {
+      font-family: 'Sora', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      fill: #5b9cf6;
+    }
+
+    .chart-label-current {
+      font-family: 'Sora', sans-serif;
+      font-size: 9px;
+      fill: #f0a93b;
+    }
+
+    .pnl-meta {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 8px 4px;
+      font-size: 11px;
+    }
+
+    .pnl-meta .item {
+      text-align: center;
+    }
+
+    .pnl-meta .item .lbl {
+      color: var(--text-tertiary);
+      font-size: 9.5px;
+    }
+
+    .pnl-meta .item .val {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .pnl-meta .item .val.profit {
+      color: var(--positive);
+    }
+
+    .pnl-meta .item .val.loss {
+      color: var(--negative);
+    }
+
+    .pnl-meta .item .val.neutral {
+      color: var(--text-primary);
+    }
+
+
+    /* ---------- v4: options trend alert (v5: moved inline into opt-header) ---------- */
+    .opt-scene-hint {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      padding: 8px 0 4px;
+      letter-spacing: 0.2px;
+      line-height: 1.4;
+    }
+
+    /* ---------- v5: catalyst/risk horizontal scroll row ---------- */
+    .chips-scroll-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chips-scroll-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-tertiary);
+      margin-bottom: 0;
+      flex-shrink: 0;
+      margin-right: 4px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .chips-scroll-label.pos {
+      color: var(--positive);
+    }
+
+    .chips-scroll-label.neg {
+      color: var(--negative);
+    }
+
+    .chips-scroll-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 2px 0 6px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chips-scroll-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chips-scroll-row .chip-pos,
+    .chips-scroll-row .chip-neg {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    /* ---------- v5: opt-header inline scenario switch ---------- */
+    .combo-opt-block .opt-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      flex-wrap: nowrap;
+    }
+
+    .opt-header .scene-text {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-tertiary);
+      letter-spacing: 0.2px;
+      text-transform: none;
+      margin-left: 4px;
+    }
+
+    .opt-header .scene-text .dir {
+      font-weight: 600;
+    }
+
+    .opt-header .scene-text .dir.up {
+      color: var(--positive);
+    }
+
+    .opt-header .scene-text .dir.down {
+      color: var(--negative);
+    }
+
+    .opt-header .scene-icons-inline {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .opt-header .scene-icons-inline .scene-icon {
+      width: 36px;
+      height: 28px;
+      border-radius: 8px;
+    }
+
+    .opt-header .scene-icons-inline .scene-icon svg {
+      width: 22px;
+      height: 16px;
+    }
+
+    /* ---------- v5: combo-head inline Watchlist button ---------- */
+    .combo-head .code-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .combo-head .add-fav-btn {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(201, 169, 110, 0.12);
+      color: var(--gold);
+      border: 1px solid var(--gold-line);
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       v8 new styles
+    ============================================================ */
+
+    .scroll-x {
+      overflow-x: auto;
+      flex-wrap: nowrap !important;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scroll-x::-webkit-scrollbar {
+      display: none;
+    }
+
+    .opp-tag.highlight {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid var(--gold-line);
+      font-weight: 500;
+    }
+
+    .row-label {
+      flex: 0 0 auto;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      line-height: 24px;
+    }
+
+    .opt-chip-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 2px 0 2px;
+    }
+
+    .opt-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      font-family: 'Sora', sans-serif;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(91, 156, 246, 0.10), rgba(201, 169, 110, 0.06));
+      border: 1px solid rgba(91, 156, 246, 0.22);
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .opt-chip .opt-price {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .stock-nav-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 4px 4px 12px;
+    }
+
+    .stock-nav-tab {
+      flex: 0 0 auto;
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .stock-nav-tab.active {
+      background: var(--gold);
+      color: #0a0a0f;
+      border-color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       v9: Webull-style minimal options list
+    ============================================================ */
+    .opt-list-compact {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .opt-list-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: start;
+    }
+
+    .opt-list-item:last-child {
+      border-bottom: 0;
+    }
+
+    .opt-list-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .opt-strike {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+    }
+
+    .opt-leverage {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.2px;
+    }
+
+    .opt-leverage strong {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .opt-list-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .opt-list-meta .meta-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .opt-list-meta .meta-val {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .opt-list-meta .meta-val.urgent {
+      color: var(--negative);
+    }
+
+    .opt-list-meta .meta-val.medium-urg {
+      color: var(--amber);
+    }
+
+    .opt-list-meta .meta-val.liq-high {
+      color: var(--positive);
+    }
+
+    .opt-list-meta .meta-val.liq-mid {
+      color: var(--amber);
+    }
+
+    .opt-list-meta .meta-lbl {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      letter-spacing: 0.2px;
+    }
+
+    .opt-list-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .opt-return {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--positive);
+      letter-spacing: -0.3px;
+    }
+
+    .opt-list-right .opt-buy-btn {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 18px;
+      border-radius: 16px;
+      background: var(--positive);
+      color: #0a0a0f;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+    }
+
+    .opt-list-right .opt-cost {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .opt-chain-link {
+      display: block;
+      text-align: center;
+      padding: 10px 0 4px;
+      font-size: 11.5px;
+      color: var(--gold);
+      letter-spacing: 0.3px;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       v10-EN: Single-phone interactive navigation
+    ============================================================ */
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .nav-back[hidden] { display: none !important; }
+    #tab-bar.hidden { display: none; }
+    body {
+      padding: 48px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .screens-container { display: block; }
+    [data-go] { cursor: pointer; }
+    .nav-back { cursor: pointer; background: transparent; border: 0; color: inherit; padding: 0; }
+    .nav-back svg { display: block; }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-header">
+    <h1>Hot Opportunity <span class="accent">Radar</span> · V5 · <span class="accent">Interactive</span></h1>
+    <div class="subtitle">Single-device prototype · Tap any card, chip or banner to navigate</div>
+    <div class="meta">
+      <span>Version 5.0 · antigravity · v11-EN</span>
+      <span>2026-05-14</span>
+      <span>iPhone 17 · Single device</span>
+      <span>Tap to navigate</span>
+    </div>
+  </div>
+
+  <div class="screens-container">
+    <div class="iphone-frame">
+      <div class="iphone-screen">
+        <div class="dynamic-island"></div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <svg viewBox="0 0 18 12">
+              <path d="M1 8.5h2v3H1zM5 6h2v5.5H5zM9 3.5h2v8H9zM13 1h2v10.5h-2z" />
+            </svg>
+            <svg viewBox="0 0 18 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+              <path d="M3.5 5C5.5 2.5 9 1 9 1s3.5 1.5 5.5 4M5.5 7.5C6.8 6 9 5 9 5s2.2 1 3.5 2.5" />
+              <circle cx="9" cy="10.5" r="0.8" fill="currentColor" />
+            </svg>
+            <svg class="battery" viewBox="0 0 24 12" width="24" height="12">
+              <rect x="1" y="1" width="19" height="10" rx="2" />
+              <rect x="21" y="3.5" width="2" height="5" rx="1" fill="currentColor" />
+              <rect x="2.5" y="2.5" width="14" height="7" rx="1" fill="currentColor" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Nav bar -->
+        <div class="nav-bar" id="nav-bar">
+          <div class="left">
+            <button class="nav-back" hidden aria-label="Back">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <span class="nav-title">Radar</span>
+          </div>
+          <div class="right">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M16 16l5 5" />
+            </svg>
+            <svg viewBox="0 0 24 24">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             SCREEN 1 · Today's Top Opportunities
+        ============================================================ -->
+        <section class="screen active" data-screen="s1">
+          <div class="scroll-body">
+            <!-- Brand block -->
+            <div class="brand-block">
+              <div>
+                <div class="title"><span class="accent">AI</span> Opportunity Radar</div>
+                <div class="sub">US Markets · 2026-05-07 · Updated 30 min before close</div>
+              </div>
+              <div class="brand-pulse"></div>
+            </div>
+
+            <!-- Market tabs -->
+            <div class="market-tabs">
+              <div class="market-tab active">US</div>
+              <div class="market-tab">KSA</div>
+            </div>
+
+            <!-- Hit banner -->
+            <div class="hit-banner clickable" data-go="s2" role="button" tabindex="0">
+              <div class="ico">★</div>
+              <div class="text">Your watchlist <strong>NVDA</strong> is sitting inside today's #1 opportunity. <strong>Tap to view</strong>.</div>
+              <div class="arrow">›</div>
+            </div>
+
+            <!-- Opportunity list -->
+            <div class="opp-list">
+
+              <!-- Card 1 -->
+              <div class="opp-card rank-1 clickable" data-go="s2" role="button" tabindex="0">
+                <div class="opp-head">
+                  <div class="opp-head-left">
+                    <div class="opp-title">AI Server Liquid Cooling Demand Surge</div>
+                  </div>
+                </div>
+                <div class="opp-pitch"><span class="hl">Nvidia Blackwell server power draw climbing past 1,200W/GPU</span> is accelerating order flow into liquid cooling, power delivery and rack-infrastructure names.</div>
+
+                <div class="opp-tags">
+                  <span class="opp-tag highlight">Liquid Cooling Demand</span>
+                  <span class="opp-tag highlight">Orders +135%</span>
+                  <span class="opp-tag highlight">Leaders Accelerating</span>
+                </div>
+
+                <div class="stock-row scroll-x">
+                  <span class="row-label">STOCKS</span>
+                  <span class="stock-chip up"><span>NVDA</span><span class="star">★</span><span class="pct">+3.87%</span></span>
+                  <span class="stock-chip up"><span>SMCI</span><span class="pos">●</span><span class="pct">+5.42%</span></span>
+                  <span class="stock-chip up"><span>VRT</span><span class="pct">+2.13%</span></span>
+                  <span class="stock-chip up"><span>ETN</span><span class="pct">+1.67%</span></span>
+                  <span class="stock-chip up"><span>ANET</span><span class="star">★</span><span class="pct">+2.94%</span></span>
+                </div>
+
+                <div class="opt-chip-row scroll-x">
+                  <span class="row-label">OPTIONS</span>
+                  <span class="opt-chip">NVDA <span class="opt-price">$1.2–$2.8</span></span>
+                  <span class="opt-chip">SMCI <span class="opt-price">$0.8–$2.5</span></span>
+                  <span class="opt-chip">VRT <span class="opt-price">$0.9–$1.6</span></span>
+                  <span class="opt-chip">ETN <span class="opt-price">$1.4–$2.6</span></span>
+                  <span class="opt-chip">ANET <span class="opt-price">$1.1–$2.9</span></span>
+                </div>
+                <div class="card-jump-hint">View details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg></div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="opp-card clickable" data-go="s2" role="button" tabindex="0">
+                <div class="opp-head">
+                  <div class="opp-head-left">
+                    <div class="opp-title">Treasury Yields Roll Over → Long-Duration Tailwind</div>
+                  </div>
+                </div>
+                <div class="opp-pitch">Softer May payrolls plus easing inflation expectations have pushed the <span class="hl">10Y yield below 4.1%</span>, opening a multiple-expansion window.</div>
+
+                <div class="opp-tags">
+                  <span class="opp-tag highlight">Rates Falling</span>
+                  <span class="opp-tag highlight">Multiple Expansion</span>
+                  <span class="opp-tag highlight">Safe Havens</span>
+                </div>
+
+                <div class="stock-row scroll-x">
+                  <span class="row-label">STOCKS</span>
+                  <span class="stock-chip up"><span>TLT</span><span class="pct">+1.82%</span></span>
+                  <span class="stock-chip up"><span>TMF</span><span class="pct">+5.21%</span></span>
+                  <span class="stock-chip up"><span>QQQ</span><span class="pct">+1.34%</span></span>
+                  <span class="stock-chip up"><span>GLD</span><span class="pct">+0.92%</span></span>
+                </div>
+
+                <div class="opt-chip-row scroll-x">
+                  <span class="row-label">OPTIONS</span>
+                  <span class="opt-chip">TLT <span class="opt-price">$1.3–$2.0</span></span>
+                  <span class="opt-chip">TMF <span class="opt-price">$0.6–$1.8</span></span>
+                  <span class="opt-chip">QQQ <span class="opt-price">$1.5–$2.7</span></span>
+                  <span class="opt-chip">GLD <span class="opt-price">$0.9–$1.9</span></span>
+                </div>
+                <div class="card-jump-hint">View details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg></div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="opp-card clickable" data-go="s2" role="button" tabindex="0">
+                <div class="opp-head">
+                  <div class="opp-head-left">
+                    <div class="opp-title">Semi-Cap Orders Inflection</div>
+                  </div>
+                </div>
+                <div class="opp-pitch">ASML lifted full-year guidance and <span class="hl">EUV shipments are accelerating</span>, confirming an inflection in leading-edge capex.</div>
+
+                <div class="opp-tags">
+                  <span class="opp-tag highlight">EUV Ramp</span>
+                  <span class="opp-tag highlight">Guidance Raise</span>
+                  <span class="opp-tag highlight">Capex Inflection</span>
+                </div>
+
+                <div class="stock-row scroll-x">
+                  <span class="row-label">STOCKS</span>
+                  <span class="stock-chip up"><span>ASML</span><span class="pct">+4.31%</span></span>
+                  <span class="stock-chip up"><span>AMAT</span><span class="pct">+2.85%</span></span>
+                  <span class="stock-chip up"><span>LRCX</span><span class="pct">+3.42%</span></span>
+                  <span class="stock-chip up"><span>KLAC</span><span class="pct">+2.08%</span></span>
+                </div>
+
+                <div class="opt-chip-row scroll-x">
+                  <span class="row-label">OPTIONS</span>
+                  <span class="opt-chip">ASML <span class="opt-price">$1.8–$2.9</span></span>
+                  <span class="opt-chip">AMAT <span class="opt-price">$1.2–$1.6</span></span>
+                  <span class="opt-chip">LRCX <span class="opt-price">$1.4–$2.3</span></span>
+                  <span class="opt-chip">KLAC <span class="opt-price">$0.9–$2.1</span></span>
+                </div>
+                <div class="card-jump-hint">View details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg></div>
+              </div>
+
+              <!-- Card 4 -->
+              <div class="opp-card clickable" data-go="s2" role="button" tabindex="0">
+                <div class="opp-head">
+                  <div class="opp-head-left">
+                    <div class="opp-title">Oil Higher → Energy Wins, Airlines Pressured</div>
+                  </div>
+                </div>
+                <div class="opp-pitch">Middle East supply jitters plus an extended OPEC+ cut have pushed <span class="hl">Brent above $88</span>, with the pass-through splitting sharply by sector.</div>
+
+                <div class="opp-tags">
+                  <span class="opp-tag highlight">Oil Breakout</span>
+                  <span class="opp-tag highlight">Supply Squeeze</span>
+                  <span class="opp-tag highlight">Sector Divergence</span>
+                </div>
+
+                <div class="stock-row scroll-x">
+                  <span class="row-label">STOCKS</span>
+                  <span class="stock-chip up"><span>XOM</span><span class="pct">+2.43%</span></span>
+                  <span class="stock-chip up"><span>CVX</span><span class="pct">+1.89%</span></span>
+                  <span class="stock-chip up"><span>SLB</span><span class="pct">+3.12%</span></span>
+                  <span class="stock-chip down"><span>DAL</span><span class="pct">-1.34%</span></span>
+                  <span class="stock-chip down"><span>UAL</span><span class="pct">-0.96%</span></span>
+                </div>
+
+                <div class="opt-chip-row scroll-x">
+                  <span class="row-label">OPTIONS</span>
+                  <span class="opt-chip">XOM <span class="opt-price">$1.5–$2.8</span></span>
+                  <span class="opt-chip">CVX <span class="opt-price">$1.2–$2.4</span></span>
+                  <span class="opt-chip">SLB <span class="opt-price">$0.7–$1.9</span></span>
+                  <span class="opt-chip">DAL <span class="opt-price">$0.9–$2.1</span></span>
+                  <span class="opt-chip">UAL <span class="opt-price">$1.0–$2.3</span></span>
+                </div>
+                <div class="card-jump-hint">View details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg></div>
+              </div>
+
+              <!-- Card 5 -->
+              <div class="opp-card clickable" data-go="s2" role="button" tabindex="0">
+                <div class="opp-head">
+                  <div class="opp-head-left">
+                    <div class="opp-title">Rate-Cut Hopes Lifting Gold</div>
+                  </div>
+                </div>
+                <div class="opp-pitch">Lower real yields plus sustained central-bank buying have driven <span class="hl">spot gold above $2,450/oz</span>.</div>
+
+                <div class="opp-tags">
+                  <span class="opp-tag highlight">Gold ATH</span>
+                  <span class="opp-tag highlight">Central-Bank Bid</span>
+                  <span class="opp-tag highlight">Real Yields Falling</span>
+                </div>
+
+                <div class="stock-row scroll-x">
+                  <span class="row-label">STOCKS</span>
+                  <span class="stock-chip up"><span>GLD</span><span class="pct">+1.42%</span></span>
+                  <span class="stock-chip up"><span>NEM</span><span class="pct">+3.85%</span></span>
+                  <span class="stock-chip up"><span>GOLD</span><span class="pct">+2.71%</span></span>
+                  <span class="stock-chip up"><span>AEM</span><span class="pct">+2.34%</span></span>
+                </div>
+
+                <div class="opt-chip-row scroll-x">
+                  <span class="row-label">OPTIONS</span>
+                  <span class="opt-chip">GLD <span class="opt-price">$1.2–$1.9</span></span>
+                  <span class="opt-chip">NEM <span class="opt-price">$0.8–$2.5</span></span>
+                  <span class="opt-chip">GOLD <span class="opt-price">$1.0–$2.2</span></span>
+                  <span class="opt-chip">AEM <span class="opt-price">$0.7–$1.8</span></span>
+                </div>
+                <div class="card-jump-hint">View details <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" /></svg></div>
+              </div>
+
+            </div>
+
+            <div class="compliance">For informational purposes only. Not investment advice. Data delayed by 15 minutes.</div>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             SCREEN 2 · Opportunity Detail
+        ============================================================ -->
+        <section class="screen" data-screen="s2">
+          <div class="scroll-body no-tab with-action">
+
+            <!-- Hero -->
+            <div class="detail-hero" id="sec-hero">
+              <div class="opp-title">AI Server Liquid Cooling Demand Surge</div>
+              <div class="pitch">Nvidia Blackwell server power draw is climbing past <span class="hl">1,200W+/GPU</span>, accelerating demand across liquid cooling, power delivery, power management and rack-infrastructure suppliers. April orders at leading liquid-cooling vendors are running <span class="hl">+135% year over year</span>.</div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="section" id="sec-timeline">
+              <div class="section-title"><span class="dot"></span>Catalyst Timeline<span class="timeline-more clickable"
+                  style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span></div>
+              <div class="timeline">
+                <div class="timeline-item recent">
+                  <div class="date">05-07 · Today</div>
+                  <div class="text">Sector gapped up at the open; SMCI traded +6% intraday with VRT and ANET following.</div>
+                </div>
+                <div class="timeline-item recent">
+                  <div class="date">05-06 · Yesterday</div>
+                  <div class="text">SMCI and VRT released April order metrics, up +135% and +68% year over year respectively.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tailwinds / Headwinds -->
+            <div class="section" id="sec-catalyst-risk">
+              <div class="chips-scroll-section">
+                <div>
+                  <div class="chips-scroll-row"><span class="chips-scroll-label pos">TAILWINDS</span><span
+                      class="chip-pos">Order data accelerating</span><span class="chip-pos">Hyperscaler capex raised</span><span
+                      class="chip-pos">Improved guidance from leaders</span><span class="chip-pos">Blackwell ramp on track</span></div>
+                </div>
+                <div>
+                  <div class="chips-scroll-row"><span class="chips-scroll-label neg">HEADWINDS</span><span
+                      class="chip-neg">Stretched valuations</span><span class="chip-neg">Customer concentration risk</span><span
+                      class="chip-neg">Order conversion may disappoint</span><span class="chip-neg">Short-term sentiment overheated</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section" id="sec-plans">
+              <div class="section-title"><span class="dot"></span>Related Tickers</div>
+
+              <!-- Stock nav tabs -->
+              <div class="stock-nav-tabs scroll-x" id="combo-nav">
+                <span class="stock-nav-tab active" data-stock="VRT">VRT</span>
+                <span class="stock-nav-tab" data-stock="SMCI">SMCI</span>
+                <span class="stock-nav-tab" data-stock="ETN">ETN</span>
+                <span class="stock-nav-tab" data-stock="ANET">ANET</span>
+                <span class="stock-nav-tab" data-stock="DELL">DELL</span>
+                <span class="stock-nav-tab" data-stock="NVDA">NVDA</span>
+              </div>
+
+              <!-- Horizontal swipe rail -->
+              <div class="swipe-section">
+                <div class="swipe-rail" id="combo-rail">
+
+                  <!-- Combo 1 · VRT -->
+                  <div class="combo-card" data-stock="VRT">
+                    <div class="combo-head">
+                      <div class="code-row">
+                        <span class="code">VRT</span>
+                        <span class="timeline-more clickable"
+                          style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span>
+                      </div>
+                      <div class="why">Integrated thermal management + power distribution for data centers</div>
+                      <div class="price-row">
+                        <span class="price">$112.34</span>
+                        <span class="pct">+2.13%</span>
+                        <span class="add-fav-btn clickable" style="margin-left:auto;">+ Watchlist</span>
+                      </div>
+                    </div>
+                    <div class="combo-opt-block">
+                      <div class="opt-header">
+                        <span class="ico"></span><span>Options Plays</span>
+                        <span class="scene-text">If you expect price to <span class="dir up">rise</span></span>
+                        <div class="scene-icons-inline">
+                          <div class="scene-icon active clickable" data-scene="bull"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                          <div class="scene-icon clickable" data-scene="bear"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                        </div>
+                      </div>
+                      <div class="scene-panel active" data-scene="bull">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">115.00 CALL</div>
+                              <div class="opt-leverage">If VRT +1% → Option <strong>+38%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+156.2%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 105</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">118.00 CALL</div>
+                              <div class="opt-leverage">If VRT +1% → Option <strong>+52%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">12 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+203.8%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 78</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">120.00 CALL</div>
+                              <div class="opt-leverage">If VRT +1% → Option <strong>+65%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+89.4%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 185</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                      <div class="scene-panel" data-scene="bear">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">108.00 PUT</div>
+                              <div class="opt-leverage">If VRT -1% → Option <strong>+32%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+142.6%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 95</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">105.00 PUT</div>
+                              <div class="opt-leverage">If VRT -1% → Option <strong>+48%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">12 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+178.3%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 68</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Combo 2 · SMCI -->
+                  <div class="combo-card" data-stock="SMCI">
+                    <div class="combo-head">
+                      <div class="code-row">
+                        <span class="code">SMCI</span>
+                        <span class="tag-mark hold">HELD</span>
+                        <span class="timeline-more clickable"
+                          style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span>
+                      </div>
+                      <div class="why">Pure-play liquid-cooled server OEM with the highest order beta</div>
+                      <div class="price-row">
+                        <span class="price">$842.50</span>
+                        <span class="pct">+5.42%</span>
+                      </div>
+                    </div>
+
+                    <div class="combo-opt-block">
+                      <div class="opt-header">
+                        <span class="ico"></span><span>Options Plays</span>
+                        <span class="scene-text">If you expect price to <span class="dir up">rise</span></span>
+                        <div class="scene-icons-inline">
+                          <div class="scene-icon active clickable" data-scene="bull"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                          <div class="scene-icon clickable" data-scene="bear"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                        </div>
+                      </div>
+                      <div class="scene-panel active" data-scene="bull">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">850.00 CALL</div>
+                              <div class="opt-leverage">If SMCI +1% → Option <strong>+29%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">9 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+181.0%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 280</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">870.00 CALL</div>
+                              <div class="opt-leverage">If SMCI +1% → Option <strong>+45%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">9 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+245.3%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 145</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">900.00 CALL</div>
+                              <div class="opt-leverage">If SMCI +1% → Option <strong>+68%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">16 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+112.7%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 195</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                      <div class="scene-panel" data-scene="bear">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">830.00 PUT</div>
+                              <div class="opt-leverage">If SMCI -1% → Option <strong>+25%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">9 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+168.4%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 245</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">810.00 PUT</div>
+                              <div class="opt-leverage">If SMCI -1% → Option <strong>+42%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">9 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+215.6%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 130</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Combo 3 · ETN -->
+                  <div class="combo-card" data-stock="ETN">
+                    <div class="combo-head">
+                      <div class="code-row">
+                        <span class="code">ETN</span>
+                        <span class="timeline-more clickable"
+                          style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span>
+                      </div>
+                      <div class="why">Power management + distribution; AI-related mix rising</div>
+                      <div class="price-row">
+                        <span class="price">$348.92</span>
+                        <span class="pct">+1.67%</span>
+                        <span class="add-fav-btn clickable" style="margin-left:auto;">+ Watchlist</span>
+                      </div>
+                    </div>
+                    <div class="combo-opt-block">
+                      <div class="opt-header">
+                        <span class="ico"></span><span>Options Plays</span>
+                        <span class="scene-text">If you expect price to <span class="dir up">rise</span></span>
+                        <div class="scene-icons-inline">
+                          <div class="scene-icon active clickable" data-scene="bull"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                          <div class="scene-icon clickable" data-scene="bear"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                        </div>
+                      </div>
+                      <div class="scene-panel active" data-scene="bull">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">355.00 CALL</div>
+                              <div class="opt-leverage">If ETN +1% → Option <strong>+22%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">14 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+134.6%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 260</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">360.00 CALL</div>
+                              <div class="opt-leverage">If ETN +1% → Option <strong>+35%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+97.2%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 310</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                      <div class="scene-panel" data-scene="bear">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">340.00 PUT</div>
+                              <div class="opt-leverage">If ETN -1% → Option <strong>+20%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">14 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+126.8%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 215</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">335.00 PUT</div>
+                              <div class="opt-leverage">If ETN -1% → Option <strong>+33%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+88.5%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 175</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Combo 4 · ANET -->
+                  <div class="combo-card" data-stock="ANET">
+                    <div class="combo-head">
+                      <div class="code-row">
+                        <span class="code">ANET</span>
+                        <span class="tag-mark fav">★ Watchlist</span>
+                        <span class="timeline-more clickable"
+                          style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span>
+                      </div>
+                      <div class="why">High-speed Ethernet switching; AI cluster networking beneficiary</div>
+                      <div class="price-row">
+                        <span class="price">$398.21</span>
+                        <span class="pct">+2.94%</span>
+                      </div>
+                    </div>
+                    <div class="combo-opt-block">
+                      <div class="opt-header">
+                        <span class="ico"></span><span>Options Plays</span>
+                        <span class="scene-text">If you expect price to <span class="dir up">rise</span></span>
+                        <div class="scene-icons-inline">
+                          <div class="scene-icon active clickable" data-scene="bull"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                          <div class="scene-icon clickable" data-scene="bear"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                        </div>
+                      </div>
+                      <div class="scene-panel active" data-scene="bull">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">410.00 CALL</div>
+                              <div class="opt-leverage">If ANET +1% → Option <strong>+28%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">14 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+152.4%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 290</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">420.00 CALL</div>
+                              <div class="opt-leverage">If ANET +1% → Option <strong>+46%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+108.6%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 340</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                      <div class="scene-panel" data-scene="bear">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">390.00 PUT</div>
+                              <div class="opt-leverage">If ANET -1% → Option <strong>+24%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">14 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+138.7%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 240</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">380.00 PUT</div>
+                              <div class="opt-leverage">If ANET -1% → Option <strong>+40%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+94.2%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 195</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Combo 5 · DELL -->
+                  <div class="combo-card" data-stock="DELL">
+                    <div class="combo-head">
+                      <div class="code-row">
+                        <span class="code">DELL</span>
+                        <span class="timeline-more clickable"
+                          style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span>
+                      </div>
+                      <div class="why">AI server backlog growing, but consumer segment a drag</div>
+                      <div class="price-row">
+                        <span class="price">$132.18</span>
+                        <span class="pct">+0.84%</span>
+                        <span class="add-fav-btn clickable" style="margin-left:auto;">+ Watchlist</span>
+                      </div>
+                    </div>
+                    <div class="combo-opt-block">
+                      <div class="opt-header">
+                        <span class="ico"></span><span>Options Plays</span>
+                        <span class="scene-text">If you expect price to <span class="dir up">rise</span></span>
+                        <div class="scene-icons-inline">
+                          <div class="scene-icon active clickable" data-scene="bull"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                          <div class="scene-icon clickable" data-scene="bear"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                        </div>
+                      </div>
+                      <div class="scene-panel active" data-scene="bull">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">135.00 CALL</div>
+                              <div class="opt-leverage">If DELL +1% → Option <strong>+18%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+81.2%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 210</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">140.00 CALL</div>
+                              <div class="opt-leverage">If DELL +1% → Option <strong>+32%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+124.5%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 115</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                      <div class="scene-panel" data-scene="bear">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">128.00 PUT</div>
+                              <div class="opt-leverage">If DELL -1% → Option <strong>+22%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+96.3%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 185</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">122.00 PUT</div>
+                              <div class="opt-leverage">If DELL -1% → Option <strong>+38%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val">44 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+142.8%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 92</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Combo 6 · NVDA -->
+                  <div class="combo-card" data-stock="NVDA">
+                    <div class="combo-head">
+                      <div class="code-row">
+                        <span class="code">NVDA</span>
+                        <span class="tag-mark fav">★ Watchlist</span>
+                        <span class="timeline-more clickable"
+                          style="margin-left:auto;font-size:18px;color:var(--gold);cursor:pointer;">›</span>
+                      </div>
+                      <div class="why">Root driver of the liquid-cooling cycle; indirect beneficiary</div>
+                      <div class="price-row">
+                        <span class="price">$1,245.32</span>
+                        <span class="pct">+3.87%</span>
+                      </div>
+                    </div>
+                    <div class="combo-opt-block">
+                      <div class="opt-header">
+                        <span class="ico"></span><span>Options Plays</span>
+                        <span class="scene-text">If you expect price to <span class="dir up">rise</span></span>
+                        <div class="scene-icons-inline">
+                          <div class="scene-icon active clickable" data-scene="bull"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                          <div class="scene-icon clickable" data-scene="bear"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                        </div>
+                      </div>
+                      <div class="scene-panel active" data-scene="bull">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">1260.00 CALL</div>
+                              <div class="opt-leverage">If NVDA +1% → Option <strong>+45%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+192.6%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 275</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">1280.00 CALL</div>
+                              <div class="opt-leverage">If NVDA +1% → Option <strong>+62%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+268.4%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 148</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">1300.00 CALL</div>
+                              <div class="opt-leverage">If NVDA +1% → Option <strong>+78%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val medium-urg">14 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-mid">Medium</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+145.7%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 220</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                      <div class="scene-panel" data-scene="bear">
+                        <div class="opt-list-compact">
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">1230.00 PUT</div>
+                              <div class="opt-leverage">If NVDA -1% → Option <strong>+38%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+176.2%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 250</div>
+                            </div>
+                          </div>
+                          <div class="opt-list-item">
+                            <div class="opt-list-left">
+                              <div class="opt-strike">1200.00 PUT</div>
+                              <div class="opt-leverage">If NVDA -1% → Option <strong>+55%</strong> (est.)</div>
+                              <div class="opt-list-meta">
+                                <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                                <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                              </div>
+                            </div>
+                            <div class="opt-list-right">
+                              <div class="opt-return">+234.8%</div>
+                              <div class="opt-buy-btn clickable">Buy</div>
+                              <div class="opt-cost">$ 125</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="opt-chain-link clickable">View Full Options Chain ›</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Ask AI -->
+            <div class="section" id="sec-ask">
+              <div class="ai-ask-card">
+                <div class="ai-ask-head">
+                  <div class="ico"></div>
+                  <div class="lbl">Ask AI · Top questions</div>
+                  <div class="more" data-go="s4">More ›</div>
+                </div>
+                <div class="ask-chips">
+                  <div class="ask-chip" data-go="s4">How long can this play last?<span class="arrow">›</span></div>
+                  <div class="ask-chip" data-go="s4">Is SMCI too extended to chase here?<span class="arrow">›</span></div>
+                  <div class="ask-chip" data-go="s4">Which laggards still have room to catch up?<span class="arrow">›</span></div>
+                  <div class="ask-chip" data-go="s4">Could this fizzle after earnings prints?<span class="arrow">›</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="section comment-section">
+              <div class="comment-section-head">
+                <span class="lbl">Comments <span class="count">(28)</span></span>
+                <svg class="sort-ico" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4" /></svg>
+              </div>
+
+              <div class="comment-item">
+                <div class="comment-avatar">M</div>
+                <div class="comment-body">
+                  <div class="comment-meta"><span class="comment-name">Mike P.</span><span class="comment-time">31 min ago</span></div>
+                  <div class="comment-text">This liquid-cooling move actually has earnings behind it. Whether SMCI can sustain through the print is the key — I'm keeping half my position and watching it for a week.</div>
+                  <div class="comment-reaction">👍 <span>12</span></div>
+                  <div class="comment-actions">
+                    <span class="ca-item"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" /></svg>4</span>
+                    <span class="ca-item"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>Reply</span>
+                    <span class="ca-item right"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" /><circle cx="12" cy="12" r="1.4" /><circle cx="19" cy="12" r="1.4" /></svg></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:linear-gradient(135deg,#3a6bd6,#1f4598);">A</div>
+                <div class="comment-body">
+                  <div class="comment-meta"><span class="comment-name">AI_Trader</span><span class="comment-time">2h ago</span></div>
+                  <div class="comment-text">Looking across the supply chain, CoolIT and Vertiv still have room to play catch-up. The pure-play coolers feel more vulnerable to a short-term pullback.</div>
+                  <div class="comment-reaction">👍 <span>27</span></div>
+                  <div class="comment-actions">
+                    <span class="ca-item"><svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" /></svg>9</span>
+                    <span class="ca-item"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>Reply</span>
+                    <span class="ca-item right"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" /><circle cx="12" cy="12" r="1.4" /><circle cx="19" cy="12" r="1.4" /></svg></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment-more-link clickable">View all 28 comments ›</div>
+            </div>
+
+            <div class="compliance">For informational purposes only. Not investment advice. Past performance does not guarantee future results.</div>
+          </div>
+
+          <!-- Bottom action bar -->
+          <div class="detail-action-bar">
+            <div class="input-pill clickable" data-go="s4">
+              <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" /></svg>
+              <span>Ask anything about this opportunity…</span>
+            </div>
+            <div class="action-btn clickable" aria-label="Comments">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+              <span class="num">28</span>
+            </div>
+            <div class="action-btn clickable" aria-label="Like">
+              <svg viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" /></svg>
+              <span class="num">142</span>
+            </div>
+            <div class="action-btn clickable" aria-label="Share">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
+              <span class="num">36</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             SCREEN 3 · Stock Page (NVDA)
+        ============================================================ -->
+        <section class="screen" data-screen="s3">
+          <div class="scroll-body" style="height: calc(var(--phone-h) - 54px - 51px);">
+
+            <!-- Stock hero -->
+            <div class="stock-hero">
+              <div class="code-row">
+                <span class="code">NVDA</span>
+                <span class="name">Nvidia Corp · NASDAQ</span>
+              </div>
+              <div class="price-row">
+                <span class="price">1,245.32</span>
+                <span class="delta">+46.42 +3.87%</span>
+              </div>
+              <div class="meta-line">USD · 09:41 EDT · Turnover $42.8B · P/E 65.2 · Industry avg 28.4</div>
+            </div>
+
+            <!-- Mini chart -->
+            <div class="mini-chart">
+              <svg width="100%" height="100%" viewBox="0 0 360 60" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#2dd882" stop-opacity="0.4" />
+                    <stop offset="100%" stop-color="#2dd882" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M0,42 L20,40 L40,38 L60,42 L80,35 L100,32 L120,28 L140,30 L160,25 L180,28 L200,22 L220,18 L240,22 L260,15 L280,18 L300,12 L320,8 L340,10 L360,5 L360,60 L0,60 Z"
+                  fill="url(#chartGrad)" />
+                <path
+                  d="M0,42 L20,40 L40,38 L60,42 L80,35 L100,32 L120,28 L140,30 L160,25 L180,28 L200,22 L220,18 L240,22 L260,15 L280,18 L300,12 L320,8 L340,10 L360,5"
+                  fill="none" stroke="#2dd882" stroke-width="1.5" />
+              </svg>
+            </div>
+
+            <!-- AI Summary -->
+            <div class="ai-summary-card" data-go="s4">
+              <div class="head">
+                <span class="ico"></span>
+                <span class="lbl">AI Take</span>
+                <span class="verdict">Bullish · Multi-Catalyst</span>
+              </div>
+              <div class="body">
+                NVDA is sitting at the <span class="hl">intersection of multiple live themes</span> today: surging liquid-cooling demand, lower Treasury yields, and improving semi-cap orders. The setup is constructive, but short-term RSI is overbought — <span
+                  class="hl">watch flow and positioning</span> before pressing.
+              </div>
+            </div>
+
+            <!-- Option Snapshot Card -->
+            <div class="opt-snapshot-card">
+              <div class="snap-head">
+                <span class="ico"></span>
+                <span class="lbl">Options Snapshot</span>
+                <span class="budget">Single contract</span>
+              </div>
+              <div class="snap-body">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+                  <span style="font-size:10.5px;font-weight:600;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;">Options Plays</span>
+                  <span class="scene-text" style="font-size:11px;color:var(--text-tertiary);letter-spacing:0.2px;">If you expect price to <span class="dir up" style="font-weight:600;color:var(--positive);">rise</span></span>
+                  <div class="scene-icons-inline" style="display:flex;gap:6px;margin-left:auto;">
+                    <div class="scene-icon active clickable" data-scene="bull" style="width:36px;height:28px;border-radius:8px;"><svg viewBox="0 0 28 20"><path d="M2 16 L8 10 L14 6 L20 3 L26 2" /></svg></div>
+                    <div class="scene-icon clickable" data-scene="bear" style="width:36px;height:28px;border-radius:8px;"><svg viewBox="0 0 28 20"><path d="M2 2 L8 3 L14 6 L20 10 L26 16" /></svg></div>
+                  </div>
+                </div>
+                <!-- Bull Options -->
+                <div class="scene-panel" data-scene="bull">
+                  <div class="opt-list-compact">
+                    <div class="opt-list-item">
+                      <div class="opt-list-left">
+                        <div class="opt-strike">1260.00 CALL</div>
+                        <div class="opt-leverage">If NVDA +1% → Option <strong>+45%</strong> (est.)</div>
+                        <div class="opt-list-meta">
+                          <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                          <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                        </div>
+                      </div>
+                      <div class="opt-list-right">
+                        <div class="opt-return">+192.6%</div>
+                        <div class="opt-buy-btn clickable">Buy</div>
+                        <div class="opt-cost">$ 275</div>
+                      </div>
+                    </div>
+                    <div class="opt-list-item">
+                      <div class="opt-list-left">
+                        <div class="opt-strike">1280.00 CALL</div>
+                        <div class="opt-leverage">If NVDA +1% → Option <strong>+62%</strong> (est.)</div>
+                        <div class="opt-list-meta">
+                          <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                          <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                        </div>
+                      </div>
+                      <div class="opt-list-right">
+                        <div class="opt-return">+285.3%</div>
+                        <div class="opt-buy-btn clickable">Buy</div>
+                        <div class="opt-cost">$ 148</div>
+                      </div>
+                    </div>
+                    <div class="opt-list-item">
+                      <div class="opt-list-left">
+                        <div class="opt-strike">1300.00 CALL</div>
+                        <div class="opt-leverage">If NVDA +1% → Option <strong>+88%</strong> (est.)</div>
+                        <div class="opt-list-meta">
+                          <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                          <div class="meta-cell"><span class="meta-val liq-mid">Med</span><span class="meta-lbl">Liquidity</span></div>
+                        </div>
+                      </div>
+                      <div class="opt-list-right">
+                        <div class="opt-return">+410.7%</div>
+                        <div class="opt-buy-btn clickable">Buy</div>
+                        <div class="opt-cost">$ 72</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bear Options -->
+                <div class="scene-panel" data-scene="bear" style="display:none;">
+                  <div class="opt-list-compact">
+                    <div class="opt-list-item">
+                      <div class="opt-list-left">
+                        <div class="opt-strike">1220.00 PUT</div>
+                        <div class="opt-leverage">If NVDA -1% → Option <strong>+38%</strong> (est.)</div>
+                        <div class="opt-list-meta">
+                          <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                          <div class="meta-cell"><span class="meta-val liq-high">High</span><span class="meta-lbl">Liquidity</span></div>
+                        </div>
+                      </div>
+                      <div class="opt-list-right">
+                        <div class="opt-return negative">+156.2%</div>
+                        <div class="opt-buy-btn clickable" style="background:var(--negative);">Buy</div>
+                        <div class="opt-cost">$ 310</div>
+                      </div>
+                    </div>
+                    <div class="opt-list-item">
+                      <div class="opt-list-left">
+                        <div class="opt-strike">1200.00 PUT</div>
+                        <div class="opt-leverage">If NVDA -1% → Option <strong>+55%</strong> (est.)</div>
+                        <div class="opt-list-meta">
+                          <div class="meta-cell"><span class="meta-val urgent">5 Days</span><span class="meta-lbl">to Expiry</span></div>
+                          <div class="meta-cell"><span class="meta-val liq-mid">Med</span><span class="meta-lbl">Liquidity</span></div>
+                        </div>
+                      </div>
+                      <div class="opt-list-right">
+                        <div class="opt-return negative">+230.8%</div>
+                        <div class="opt-buy-btn clickable" style="background:var(--negative);">Buy</div>
+                        <div class="opt-cost">$ 185</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="full-chain-link">View Full Options Chain ›</div>
+            </div>
+
+            <!-- Related hot opportunities -->
+            <div class="section" style="margin-top: 18px;">
+              <div class="section-title"><span class="dot"></span>Related Hot Opportunities</div>
+              <div class="related-hot">
+                <div class="related-hot-item">
+                  <span class="ico"></span>
+                  <span class="text">AI Server Liquid Cooling Demand Surge</span>
+                  <span class="tag t-strong">Strong</span>
+                  <span class="arrow">›</span>
+                </div>
+                <div class="related-hot-item">
+                  <span class="ico"></span>
+                  <span class="text">Treasury Yields Roll Over → Multiple Expansion</span>
+                  <span class="tag t-mid">Medium</span>
+                  <span class="arrow">›</span>
+                </div>
+                <div class="related-hot-item">
+                  <span class="ico"></span>
+                  <span class="text">Wider Semiconductor Export Controls (potential)</span>
+                  <span class="tag t-neg">Risk</span>
+                  <span class="arrow">›</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attribution -->
+            <div class="section">
+              <div class="section-title"><span class="dot"></span>Why It Moved</div>
+              <div class="attribution-list">
+                <div class="attr-item">
+                  <span class="ico"></span>
+                  <div><span class="lbl">Sector flow:</span>AI server names averaged +2.3% on the day; NVDA outperformed the basket by 1.5%.</div>
+                </div>
+                <div class="attr-item">
+                  <span class="ico"></span>
+                  <div><span class="lbl">Institutional bid:</span>Block buys account for 38% of tape today, well above the 20-day average of 22%.</div>
+                </div>
+                <div class="attr-item">
+                  <span class="ico"></span>
+                  <div><span class="lbl">Options flow:</span>Weekly 1300 calls saw single-day open interest rise +47%, signalling rising attention.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Continuity -->
+            <div class="section">
+              <div class="section-title"><span class="dot"></span>Persistence</div>
+              <div class="continuity-card">
+                <div class="continuity-stages">
+                  <span>Emerging</span><span class="active">Spreading · Now</span><span>Fading</span><span>Late</span>
+                </div>
+                <div class="continuity-bar">
+                  <i></i>
+                  <span class="marker"></span>
+                </div>
+                <div class="desc">Still mid-trend with healthy flow confirmation. Next key event is the NVDA print on May 21 — watch the quality of the beat, not just the headline.</div>
+              </div>
+            </div>
+
+            <!-- Risks -->
+            <div class="section">
+              <div class="section-title"><span class="dot"></span>Current Risks</div>
+              <div class="chips-row">
+                <span class="chip-neg">Valuation stretched · P/E 65 vs 28 industry</span>
+                <span class="chip-neg">Short-term RSI overbought</span>
+                <span class="chip-neg">Export control headlines</span>
+              </div>
+            </div>
+
+            <!-- Similar plays -->
+            <div class="section">
+              <div class="section-title"><span class="dot"></span>Similar Plays</div>
+              <div class="similar-scroll">
+                <div class="sim-card up">
+                  <div class="code">SMCI</div>
+                  <div class="name">Super Micro</div>
+                  <div class="price">$842.50</div>
+                  <div class="pct">+5.42%</div>
+                </div>
+                <div class="sim-card up">
+                  <div class="code">AMD</div>
+                  <div class="name">Adv Micro</div>
+                  <div class="price">$215.80</div>
+                  <div class="pct">+2.14%</div>
+                </div>
+                <div class="sim-card up">
+                  <div class="code">MU</div>
+                  <div class="name">Micron</div>
+                  <div class="price">$118.45</div>
+                  <div class="pct">+1.83%</div>
+                </div>
+                <div class="sim-card up">
+                  <div class="code">TSM</div>
+                  <div class="name">TSMC ADR</div>
+                  <div class="price">$182.60</div>
+                  <div class="pct">+1.63%</div>
+                </div>
+                <div class="sim-card up">
+                  <div class="code">AVGO</div>
+                  <div class="name">Broadcom</div>
+                  <div class="price">$1,587.20</div>
+                  <div class="pct">+1.21%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- If you hold this -->
+            <div class="section">
+              <div class="section-title"><span class="dot"></span>If You Hold This</div>
+              <div class="holding-card">
+                <div class="top">
+                  <span style="font-size:14px"></span>
+                  <span class="lbl">Your Position</span>
+                </div>
+                <div class="body">You hold <strong>50 shares of NVDA</strong> at a cost basis of $945.20. Today's open P/L: <span class="pos">+$15,005</span> (<span
+                    class="pos">+31.7%</span>). AI take: still in the spreading phase — keep the May 21 print on your radar.</div>
+              </div>
+            </div>
+
+            <div class="compliance">Data delayed by 15 minutes · AI commentary is not investment advice.</div>
+
+          </div>
+
+          <!-- Stock action bar -->
+          <div class="stock-action-bar">
+            <div class="btn fav clickable">+ Watchlist</div>
+            <div class="btn buy clickable">Buy</div>
+            <div class="btn sell clickable">Sell</div>
+            <div class="btn opt-flash clickable" data-go="s4"><span class="flash">⚡</span>Ask AI</div>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             SCREEN 4 · Ask AI Chat
+        ============================================================ -->
+        <section class="screen" data-screen="s4">
+          <div class="scroll-body with-input" style="padding: 0 12px 20px;">
+
+            <!-- Context -->
+            <div class="chat-context">
+              <span class="ico"></span>
+              <span>Context: <span class="hl">AI Server Liquid Cooling</span> opportunity</span>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="suggest-scroll">
+              <div class="suggest-chip">How long can this play last?</div>
+              <div class="suggest-chip">Is SMCI too extended to chase?</div>
+              <div class="suggest-chip">Which laggards can catch up?</div>
+              <div class="suggest-chip">Will it fizzle after earnings?</div>
+            </div>
+
+            <!-- Chat -->
+            <div class="chat-area">
+
+              <div class="bubble user">Is SMCI too extended to chase here? I already own 100 shares, up 18%.</div>
+              <div class="bubble-meta user">9:38</div>
+
+              <div class="bubble ai">
+                <div class="verdict-row">
+                  <span class="lbl">Quick take</span>
+                  <span class="val">Risky to add — but no rush to sell what you own.</span>
+                </div>
+                <ul class="reason-list">
+                  <li>Valuation: P/E 32 sits well above SMCI's 3-year average of 18.</li>
+                  <li>Technicals: 3-day volume is up 2.4x, RSI prints 78 — firmly overbought.</li>
+                  <li>Catalyst absorption: April order beat is already in the price; the short-term spark has largely played out.</li>
+                </ul>
+                <div class="alt-tip">
+                  <span class="lbl">Alternative angle:</span> Same-theme names with cheaper multiples — <strong>VRT</strong> (P/E 26) and <strong>ETN</strong> (P/E 22) — look like better short-term risk/reward. If you keep SMCI, consider scaling out above $850 to lock in some gains.
+                </div>
+                <div class="compliance-line">For informational purposes only. Not investment advice. Past performance does not guarantee future results.</div>
+              </div>
+              <div class="bubble-meta ai">AI · 9:38</div>
+
+              <div class="bubble user">So should I just roll the whole thing into VRT?</div>
+              <div class="bubble-meta user">9:39</div>
+
+              <div class="bubble ai">
+                One reasonable approach is a <strong style="color:var(--gold)">partial rotation</strong> rather than a full switch: keep 50% of your SMCI exposure as the highest-beta play, and rotate the other 50% into VRT / ETN to smooth the valuation risk. The window before NVDA's May 21 print is the key checkpoint.
+              </div>
+              <div class="bubble-meta ai">AI · 9:39</div>
+
+            </div>
+
+          </div>
+
+          <!-- Input bar -->
+          <div class="input-bar">
+            <div class="input-box">Ask anything…</div>
+            <div class="send-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tab bar (visible on S1 only) -->
+        <div class="tab-bar" id="tab-bar">
+          <div class="tab-item" data-tab="home">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            <span>Home</span>
+          </div>
+          <div class="tab-item" data-tab="markets">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 20V10M12 20V4M6 20v-6" />
+            </svg>
+            <span>Markets</span>
+          </div>
+          <div class="tab-item radar active" data-tab="radar">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <circle cx="12" cy="12" r="5" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+              <line x1="12" y1="3" x2="12" y2="6" />
+            </svg>
+            <span>Radar</span>
+          </div>
+          <div class="tab-item" data-tab="news">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            <span>News</span>
+          </div>
+          <div class="tab-item" data-tab="me">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="7" r="4" />
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            </svg>
+            <span>Me</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================================
+       v11-EN (antigravity) · Single-phone navigation + legacy interactions
+       Restored: s2 (Opportunity Detail) entry from S1 cards
+    ============================================================ */
+    (function () {
+      'use strict';
+
+      /* --- Single-phone navigation stack --- */
+      const stack = ['s1'];
+      const titles = { s1: 'Radar', s2: 'Opportunity Detail', s4: 'Ask AI' };
+      const showsTabBar = { s1: true, s2: false, s4: false };
+      const screens = document.querySelectorAll('.screen');
+      const navTitle = document.querySelector('#nav-bar .nav-title');
+      const navBack = document.querySelector('#nav-bar .nav-back');
+      const tabBar = document.querySelector('#tab-bar');
+
+      function render(id) {
+        screens.forEach(s => s.classList.toggle('active', s.dataset.screen === id));
+        navTitle.textContent = titles[id];
+        if (id === 's1') navBack.setAttribute('hidden', '');
+        else navBack.removeAttribute('hidden');
+        tabBar.classList.toggle('hidden', !showsTabBar[id]);
+        const sc = document.querySelector('.iphone-screen');
+        if (sc) sc.scrollTop = 0;
+        document.querySelectorAll('.screen.active .scroll-body').forEach(b => b.scrollTop = 0);
+      }
+      function go(id) {
+        if (!titles[id]) return;
+        if (id !== stack[stack.length - 1]) { stack.push(id); render(id); }
+      }
+      function back() {
+        if (stack.length > 1) { stack.pop(); render(stack[stack.length - 1]); }
+      }
+
+      document.addEventListener('click', function (e) {
+        if (e.target.closest('.nav-back')) { e.preventDefault(); back(); return; }
+        const jump = e.target.closest('[data-go]');
+        if (jump) { e.preventDefault(); e.stopPropagation(); go(jump.dataset.go); return; }
+        const tab = e.target.closest('.tab-item[data-tab]');
+        if (tab && tab.dataset.tab === 'radar') {
+          stack.length = 0; stack.push('s1'); render('s1');
+        }
+      }, true);
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const jump = e.target.closest('[data-go]');
+        if (!jump) return;
+        e.preventDefault();
+        go(jump.dataset.go);
+      });
+
+      /* --- Market tabs --- */
+      document.querySelectorAll('.market-tabs').forEach(function (group) {
+        group.querySelectorAll('.market-tab').forEach(function (tab) {
+          tab.addEventListener('click', function (e) {
+            e.stopPropagation();
+            group.querySelectorAll('.market-tab').forEach(function (t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+          });
+        });
+      });
+
+      /* --- Scene icons inside combo-card --- */
+      document.querySelectorAll('.combo-opt-block').forEach(function (block) {
+        var icons = block.querySelectorAll('.scene-icon');
+        var panels = block.querySelectorAll('.scene-panel');
+        var sceneText = block.querySelector('.scene-text');
+        icons.forEach(function (icon) {
+          icon.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var scene = icon.getAttribute('data-scene');
+            icons.forEach(function (ic) { ic.classList.remove('active'); });
+            icon.classList.add('active');
+            panels.forEach(function (panel) {
+              panel.classList.toggle('active', panel.getAttribute('data-scene') === scene);
+            });
+            if (sceneText) {
+              var dirSpan = sceneText.querySelector('.dir');
+              if (scene === 'bull') {
+                dirSpan.textContent = 'rise';
+                dirSpan.className = 'dir up';
+              } else {
+                dirSpan.textContent = 'fall';
+                dirSpan.className = 'dir down';
+              }
+            }
+          });
+        });
+      });
+
+      /* --- Stock-nav tabs · combo-rail sync --- */
+      document.querySelectorAll('.stock-nav-tabs').forEach(function (navGroup) {
+        var section = navGroup.closest('.section');
+        if (!section) return;
+        var rail = section.querySelector('.swipe-rail');
+        if (!rail) return;
+        var tabs = navGroup.querySelectorAll('.stock-nav-tab');
+        var cards = rail.querySelectorAll('.combo-card');
+
+        // We don't add click handlers here because tabs use data-go to navigate to S3.
+        // The rail still updates active tab as user swipes.
+        var ticking = false;
+        rail.addEventListener('scroll', function () {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function () {
+            var firstCard = cards[0];
+            if (firstCard) {
+              var step = firstCard.offsetWidth + 12;
+              var idx = Math.round(rail.scrollLeft / step);
+              if (idx < 0) idx = 0;
+              if (idx >= tabs.length) idx = tabs.length - 1;
+              tabs.forEach(function (t, j) { t.classList.toggle('active', j === idx); });
+            }
+            ticking = false;
+          });
+        });
+      });
+
+      /* --- S3 options snapshot scene switching --- */
+      document.querySelectorAll('.opt-snapshot-card').forEach(function (card) {
+        var icons = card.querySelectorAll('.scene-icon');
+        var sceneText = card.querySelector('.scene-text');
+        icons.forEach(function (icon) {
+          icon.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var scene = icon.getAttribute('data-scene');
+            icons.forEach(function (ic) { ic.classList.remove('active'); });
+            icon.classList.add('active');
+            if (sceneText) {
+              var dirSpan = sceneText.querySelector('.dir');
+              if (dirSpan) {
+                if (scene === 'bull') {
+                  dirSpan.textContent = 'rise';
+                  dirSpan.className = 'dir up';
+                  dirSpan.style.color = 'var(--positive)';
+                } else {
+                  dirSpan.textContent = 'fall';
+                  dirSpan.className = 'dir down';
+                  dirSpan.style.color = 'var(--negative)';
+                }
+              }
+            }
+            card.querySelectorAll('.scene-panel').forEach(function (panel) {
+              panel.style.display = panel.getAttribute('data-scene') === scene ? '' : 'none';
+            });
+          });
+        });
+      });
+    })();
+  </script>
+
+</body>
+
+</html>
